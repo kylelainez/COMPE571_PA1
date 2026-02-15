@@ -14,11 +14,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
-const uint64_t N = 1000000000;
+#include <stdlib.h>
 
 /* Source Code *************************************************************************/
-int main()
+int main(int argc, char* argv[])
 {
+    uint64_t N = strtoull(argv[1],NULL, 10);
     uint64_t sum = 0;
     clock_t start, end;
     

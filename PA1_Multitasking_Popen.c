@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
 
-#define NUM_TASKS 4
-#define N 1000000000ll
+int main(int argc, char* argv[]){
+    uint64_t N = strtoull(argv[1],NULL, 10);
+    uint64_t NUM_TASKS = strtoull(argv[2],NULL,10);
 
-int main(){
     FILE* fps[NUM_TASKS];
     uint64_t total_sum = 0;
     
@@ -36,7 +37,7 @@ int main(){
     elapsed = end.tv_sec - start.tv_sec;
     elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    printf("The total summation of 0 through %llu is %lu\n", N, total_sum);
+    printf("The total summation of 0 through %lu is %lu\n", N, total_sum);
     printf("The total time to perform the workload multiprocessed with popen was %f seconds\n", elapsed);
 
 }

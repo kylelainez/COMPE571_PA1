@@ -18,10 +18,10 @@
 #include <unistd.h>
 
 /* Source Code *************************************************************************/
-#define N 1000000000ll
-#define NUM_TASKS 4
+int main(int argc, char* argv[]){
+    uint64_t N = strtoull(argv[1],NULL, 10);
+    uint64_t NUM_TASKS = strtoull(argv[2],NULL,10);
 
-int main(){
     int pipes[NUM_TASKS][2];
     pid_t pids[NUM_TASKS];
 
@@ -66,7 +66,7 @@ int main(){
     elapsed = end.tv_sec - start.tv_sec;
     elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    printf("The total summation of 0 through %llu is %lu\n", N, total_sum);
+    printf("The total summation of 0 through %lu is %lu\n", N, total_sum);
     printf("The total time to perform the workload multithreaded was %f seconds\n", elapsed);
     return 0;
 }

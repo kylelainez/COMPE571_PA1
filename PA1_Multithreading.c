@@ -19,9 +19,6 @@
 #include <unistd.h>
 
 /* Source Code *************************************************************************/
-#define N 1000000000ll
-#define NUM_THREADS 8
-
 typedef struct{
     uint64_t start;
     uint64_t end;
@@ -41,7 +38,10 @@ void* ChildThread(void* args){
     pthread_exit((void*) sum);
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    uint64_t N = strtoull(argv[1],NULL, 10);
+    uint64_t NUM_THREADS = strtoull(argv[2],NULL,10);
+
     ThreadArgs args[NUM_THREADS];
     pthread_t thread_id[NUM_THREADS];
     uint64_t* thread_sum = NULL;
@@ -73,7 +73,7 @@ int main(){
     elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
 
 
-    printf("The total summation of 0 through %llu is %lu\n", N, sum);
+    printf("The total summation of 0 through %lu is %lu\n", N, sum);
     printf("The total time to perform the workload multithreaded was %f seconds\n", elapsed);
 
     return 0;
