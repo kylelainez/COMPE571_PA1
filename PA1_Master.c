@@ -41,15 +41,33 @@ int main(){
     char command[256];
     for(int i=0; i < 4; i++){
         for (int val=0; val<3 ; val++){
-            for(int j=0; j<10; j++){                    // Loop to run the cases 10 times
-                FILE* fp;
-                sprintf(command, programs[i],N[val],NUM_MULTI[val]);
-                fp = popen(command, "r");
-                fscanf(fp, "%lu %lf", &total_sum[i][val][j], &seconds[i][val][j]);
-                elapsed[i][val] += seconds[i][val][j];
+
+            if (i == 0){
+                for(int j=0; j<10; j++){                    // Loop to run the cases 10 times
+                    FILE* fp;
+                    sprintf(command, programs[i],N[val],NUM_MULTI[val]);
+                    fp = popen(command, "r");
+                    fscanf(fp, "%lu %lf", &total_sum[i][val][j], &seconds[i][val][j]);
+                    elapsed[i][val] += seconds[i][val][j];
+                }
+                elapsed[i][val] = elapsed[i][val] / 10;
+                printf("Average time taken using %s with N=%lu is: %lf\n", methods[i],N[val],(elapsed[i][val]));
+            }else{
+                for (int val_thread = 0; val_thread < 3; val_thread++){
+                    for(int j=0; j<10; j++){                    // Loop to run the cases 10 times
+                        FILE* fp;
+                        sprintf(command, programs[i],N[val],NUM_MULTI[val]);
+                        fp = popen(command, "r");
+                        fscanf(fp, "%lu %lf", &total_sum[i][val][j], &seconds[i][val][j]);
+                        elapsed[i][val] += seconds[i][val][j];
+                    }
+                    elapsed[i][val] = elapsed[i][val] / 10;
+                    printf("Average time taken using %s with N=%lu and NUM_THREADS/TASK=%d is: %lf\n", methods[i],N[val],NUM_MULTI[val_thread],(elapsed[i][val]));
+                }
+                
+                
             }
-            elapsed[i][val] = elapsed[i][val] / 10;
-            printf("Average time taken using %s with N=%lu is: %lf\n", methods[i],N[val],(elapsed[i][val]));
+            
         }
     }
     
