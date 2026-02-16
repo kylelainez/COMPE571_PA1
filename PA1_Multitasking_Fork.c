@@ -16,56 +16,78 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
+
 
 /* Source Code *************************************************************************/
+
+void doWork(uint64_t lower, uint64_t upper, int pipe);
+void Multiprocessing(uint64_t N, uint8_t NUM_THREADS);
+
 int main(int argc, char* argv[]){
     uint64_t N = strtoull(argv[1],NULL, 10);
     uint64_t NUM_TASKS = strtol(argv[2],NULL,10);
+    Multiprocessing(N,NUM_TASKS);
+    return 0;
+}
 
-    int pipes[NUM_TASKS][2];
-    pid_t pids[NUM_TASKS];
-
-    //Clock
+void Multiprocessing(uint64_t N, uint8_t NUM_PROCESSES)
+{
     struct timespec start, end;
-    double elapsed;
-    
-    clock_gettime(CLOCK_MONOTONIC, &start);          // Start Clock
+    pid_t pid;
+    pid_t* processes = malloc(sizeof(pid_t)*NUM_PROCESSES); // array of process ids 
+    uint64_t sum = 0, accumulator = 0;
+    uint64_t workLoad = N / NUM_PROCESSES;
+    int fd[2]; // 0 read 1 write 
+    pipe(fd);
 
-   for (int i=0; i< NUM_TASKS; i++){
-        pipe(pipes[i]);
-        pids[i] = fork();
+    clock_gettime(CLOCK_MONOTONIC, &start); // start work
 
-        uint64_t start = i * (N / NUM_TASKS);
-        uint64_t end = (i + 1) == NUM_TASKS ? N : (i + 1) * (N / NUM_TASKS);
-        uint64_t local_sum = 0;
+    for(int i = 0; i<NUM_PROCESSES; i++) // spawn the processes
+    {
+        pid = fork();
 
-        if (pids[i] == 0){                                        // Child Process
-            close(pipes[i][0]);
-
-            for(uint64_t j = start; j < end; j++){
-                local_sum += j;
-            }
-            write(pipes[i][1], &local_sum, sizeof(local_sum));
-            exit(0);
-
-        }else if (pids[i] > 0){                                   // Parent Process
-            close(pipes[i][1]);
+        if(pid == 0)
+        { // -------------- Child --------------
+            close(fd[0]); // child only writes 
+            uint64_t lower = workLoad*i;
+            uint64_t upper = (i == NUM_PROCESSES - 1) ? N : workLoad * (i + 1);
+            doWork(lower, upper, fd[1]); // child does work
+            close(fd[1]);
+            return; 
+        } // -------------- Child --------------
+        else
+        {
+            // close(fd[1]); // parent only reads
+            processes[i] = pid; // parent registers child
         }
-   }
-   uint64_t total_sum = 0;
-   for (int i=0; i<NUM_TASKS; i++){
-        uint64_t local_sum = 0;
-        read(pipes[i][0], &local_sum, sizeof(local_sum));
-        total_sum += local_sum;
-   }
+    }
+    
+    for(int i = 0; i<NUM_PROCESSES; i++)
+    {
+        wait(processes+sizeof(pid_t)*i); // any child termination will unblock
+        size_t a = read(fd[0], &accumulator, sizeof(uint64_t));
+        sum += accumulator;
+    }
+    close(fd[0]);
 
-
-    clock_gettime(CLOCK_MONOTONIC, &end);              // End clock
+    clock_gettime(CLOCK_MONOTONIC, &end); // end clock
 
     // Calculate time betwen start and end clock
-    elapsed = end.tv_sec - start.tv_sec;
-    elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
+    double time_taken = end.tv_sec - start.tv_sec; 
+    time_taken += (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    printf("%lu %f",total_sum, elapsed);
-    return 0;
+    printf("%lu %f",sum, time_taken);
+    free(processes);
+}
+void doWork(uint64_t lower, uint64_t upper, int pipe)
+{
+    uint64_t sum = 0;
+    int writePipe = dup(pipe);
+
+    for(uint64_t i = lower; i < upper; i++)
+    {
+        sum +=i;
+    }
+    write(writePipe, &sum, sizeof(sum)); 
 }
