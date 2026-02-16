@@ -17,6 +17,7 @@ int main(){
     system("gcc PA1_Multithreading.c -o multithreading");
     system("gcc PA1_Multitasking_Fork.c -o multitasking_fork");
     system("gcc PA1_Multitasking_Popen.c -o multitasking_popen");
+    system("gcc Calc_sum.c -o calc_sum");
     
     int NUM_MULTI[3] = {2,4,8};
     uint64_t N[3] = {100000000,1000000000,10000000000};

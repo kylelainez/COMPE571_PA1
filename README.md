@@ -32,3 +32,4 @@ gcc PA1_Multitasking_Fork -o multitasking_fork
 gcc PA1_Multitasking_Popen -o multitasking_popen
 ./multitasking_popen 10000000 8
 ```
+When individually executed, output will be the total sum first, followed by the time elapsed.
