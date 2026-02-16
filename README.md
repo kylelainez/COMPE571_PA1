@@ -19,7 +19,8 @@ gcc PA1_Sequential -o sequential`
 ### Multithreading
 ```shell
 gcc PA1_Multithreading -o multithreading
-./multithreading ${N} ${NUM_THREADS}
+./multithreading 10000000 8
+                    #N    #NUM_THREADS
 ```
 ### Multitasking using fork
 ```shell
@@ -29,5 +30,5 @@ gcc PA1_Multitasking_Fork -o multitasking_fork
 ### Multitasking using popen
 ```shell
 gcc PA1_Multitasking_Popen -o multitasking_popen
-./multitasking_fork 10000000 8
+./multitasking_popen 10000000 8
 ```
