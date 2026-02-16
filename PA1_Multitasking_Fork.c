@@ -1,5 +1,5 @@
 /****************************************************************************************
- * Author: Kyle Lainez
+ * Authors: Vincent Pierce, Kyle Lainez
  * 
  * Description: COMPE571 Programming Assignment 1 -- Comparing sequential, Multithreading,
  * and Multitasking workloads. This project implements a summation of numbers between 0 
@@ -7,7 +7,7 @@
  * Case 2 is a Multithreaded implementation using POSIX pthreads. Case 3 uses multitasking 
  * via the fork system call to spawn new processes and pipes for inter-process communication. 
  * 
- * Multitasking Implementation below
+ * Multitasking using fork Implementation below
  * *************************************************************************************/
 
 /* FILE INCLUSIONS *********************************************************************/
