@@ -1,5 +1,5 @@
 /****************************************************************************************
- * Author: Vincent Pierce 
+ * Authors: Vincent Pierce, Kyle Lainez
  * 
  * Description: COMPE571 Programming Assignment 1 -- Comparing sequential, Multithreading,
  * and Multitasking workloads. This project implements a summation of numbers between 0 
@@ -21,20 +21,23 @@ int main(int argc, char* argv[])
 {
     uint64_t N = strtoull(argv[1],NULL, 10);
     uint64_t sum = 0;
-    clock_t start, end;
+    //Clock
+    struct timespec start, end;
+    double elapsed;
     
-    start = clock();           // Start clock
+    clock_gettime(CLOCK_MONOTONIC, &start);          // Start Clock
+
     for(uint64_t i=0;i<N;++i)
     {
         sum+=i;
     }
-    end = clock();             // End clock
     
-    // Calculate time betwen start and end clock
-    double time_taken = (double)(end - start);
-    time_taken = time_taken / (double)(CLOCKS_PER_SEC);
+    clock_gettime(CLOCK_MONOTONIC, &end);              // End clock
 
-    printf("The total summation of 0 through %lu is %lu\n", N, sum);
-    printf("The total time to perform the workload sequentially was %f seconds\n", time_taken);
+    // Calculate time betwen start and end clock
+    elapsed = end.tv_sec - start.tv_sec;
+    elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
+
+    printf("%lu %f",sum, elapsed);
     return 0;
 }

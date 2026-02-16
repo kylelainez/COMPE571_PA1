@@ -40,8 +40,7 @@ void* ChildThread(void* args){
 
 int main(int argc, char* argv[]){
     uint64_t N = strtoull(argv[1],NULL, 10);
-    uint64_t NUM_THREADS = strtoull(argv[2],NULL,10);
-
+    uint64_t NUM_THREADS = strtol(argv[2],NULL,10);
     ThreadArgs args[NUM_THREADS];
     pthread_t thread_id[NUM_THREADS];
     uint64_t* thread_sum = NULL;
@@ -73,8 +72,7 @@ int main(int argc, char* argv[]){
     elapsed += (end.tv_nsec - start.tv_nsec) / 1e9;
 
 
-    printf("The total summation of 0 through %lu is %lu\n", N, sum);
-    printf("The total time to perform the workload multithreaded was %f seconds\n", elapsed);
+    printf("%lu %f",sum, elapsed);
 
     return 0;
 }
